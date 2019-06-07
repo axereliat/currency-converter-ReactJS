@@ -1,0 +1,13 @@
+.darkTheme {
+    background-color: #343a40 !important;
+    color: white;
+}
+
+.lightTheme {
+    background-color: #eee !important;
+    color: black;
+}
+
+.lightTheme .form-control:disabled {
+    background-color: darkgray;
+}
