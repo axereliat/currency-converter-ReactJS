@@ -1,13 +1,17 @@
 .darkTheme {
     background-color: #343a40 !important;
-    color: white;
+    color: white !important;
 }
 
 .lightTheme {
     background-color: #eee !important;
-    color: black;
+    color: black !important;
 }
 
 .lightTheme .form-control:disabled {
     background-color: darkgray;
+}
+
+.darkTheme .form-control:disabled {
+    background-color: gray;
 }
