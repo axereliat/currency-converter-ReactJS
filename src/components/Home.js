@@ -16,6 +16,12 @@ export default class Home extends Component {
     };
 
     componentDidMount() {
+        this.fetchCurrencies();
+
+        setInterval(this.fetchCurrencies, 1.08e+7);
+    };
+
+    fetchCurrencies = () => {
         this.setState({loading: true}, () => {
             Requester.fetchCurrencies()
                 .then(res => {
@@ -39,7 +45,6 @@ export default class Home extends Component {
                 });
         });
     };
-
 
     handleChange = e => {
         const targetName = e.target.name;
