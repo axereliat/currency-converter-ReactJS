@@ -103,7 +103,7 @@ export default class Home extends Component {
                                 <div className="row">
                                     <div className="col-md-5">
                                         <div className="form-group">
-                                            <label htmlFor="currencyFrom"><h3>Currency I have:</h3></label>
+                                            <label htmlFor="currencyFrom">Currency I have</label>
                                             <select className="form-control"
                                                     id="currencyFrom"
                                                     name="currencyFrom"
@@ -116,19 +116,20 @@ export default class Home extends Component {
                                             </select>
                                         </div>
                                         <div className="form-group">
-                                            <label htmlFor="amount1">Amount:</label>
+                                            <label htmlFor="amount1"><h3>Amount</h3></label>
                                             <input type="number"
-                                                   className="form-control"
+                                                   className="form-control form-control-lg amountInput"
                                                    id="amount1"
                                                    placeholder="Enter amount"
                                                    name="amount"
+                                                   autoFocus
                                                    onChange={this.handleChange}
                                                    value={this.state.amount}/>
                                         </div>
                                     </div>
                                     <div className="col-md-2 text-center mt-md-5">
 
-                                        <button className="btn btn-primary swapBtn" onClick={this.swapCurrencies}
+                                        <button className="btn btn-success swapBtn" onClick={this.swapCurrencies}
                                                 disabled={this.state.loading}>
                                             {!this.state.loading ? <FontAwesomeIcon icon="exchange-alt" size="3x"/> :
                                                 <FontAwesomeIcon icon="spinner" size="3x" spin/>}
@@ -136,7 +137,7 @@ export default class Home extends Component {
                                     </div>
                                     <div className="col-md-5">
                                         <div className="form-group">
-                                            <label htmlFor="currencyTo"><h3>Currency I want:</h3></label>
+                                            <label htmlFor="currencyTo">Currency I want</label>
                                             <select className="form-control"
                                                     id="currencyTo"
                                                     name="currencyTo"
@@ -149,8 +150,8 @@ export default class Home extends Component {
                                             </select>
                                         </div>
                                         <div className="form-group">
-                                            <label htmlFor="amount2">Amount:</label>
-                                            <input type="number" className="form-control form-control-plaintext"
+                                            <label htmlFor="amount2"><h3>Result</h3></label>
+                                            <input type="number" className="form-control form-control-lg amountInput"
                                                    id="amount2" value={this.state.result} disabled/>
                                         </div>
                                     </div>

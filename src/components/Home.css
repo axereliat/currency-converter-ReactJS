@@ -15,3 +15,8 @@
 .darkTheme .form-control:disabled {
     background-color: lightgrey;
 }
+
+.amountInput {
+    color: coral !important;
+    font-size: 2em !important;
+}
