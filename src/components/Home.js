@@ -3,6 +3,7 @@ import './Home.css';
 import ThemeContext from '../context/theme-context';
 import {Requester} from "../api/Requester";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import Footer from "./Footer";
 
 export default class Home extends Component {
 
@@ -91,6 +92,8 @@ export default class Home extends Component {
             <ThemeContext.Consumer>
                 {context => (
                     <Fragment>
+                        <h1 className="text-center mt-2">Currency Converter</h1>
+                        <hr/>
                         <div className="text-center">
                             <button
                                 className={"btn btn-secondary btn-lg mt-3 mb-2 " + (context.theme === 'darkTheme' ? 'lightTheme' : 'darkTheme')}
@@ -158,6 +161,7 @@ export default class Home extends Component {
                                 </div>
                             </form>
                         </div>
+                        <Footer/>
                     </Fragment>
                 )}
             </ThemeContext.Consumer>
