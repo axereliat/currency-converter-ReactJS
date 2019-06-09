@@ -10,6 +10,8 @@ export default class Home extends Component {
         currencies: [],
         currencyFrom: '',
         currencyTo: '',
+        result: '0.00',
+        amount: '',
         loading: false
     };
 
@@ -18,11 +20,15 @@ export default class Home extends Component {
             Requester.fetchCurrencies()
                 .then(res => {
                     this.setState({
-                        currencies: [...new Set(res.data.map(item => item.name))].sort((a, b) => a.localeCompare(b)),
+                        currencies: [...new Set(res.data.map(item => item.name))]
+                            .map(name => res.data.find(item => item.name === name))
+                            .sort((a, b) => a.name.localeCompare(b.name))
                     }, () => {
                         this.setState({
                             currencyFrom: localStorage.getItem('currencyFrom') || this.state.currencies[0],
                             currencyTo: localStorage.getItem('currencyTo') || this.state.currencies[0],
+                            amount: localStorage.getItem('amount') || '',
+                            result: localStorage.getItem('result') || '',
                             loading: false
                         })
                     })
@@ -36,10 +42,15 @@ export default class Home extends Component {
 
 
     handleChange = e => {
+        const targetName = e.target.name;
+        const targetValue = e.target.value;
+
         this.setState({
-            [e.target.name]: e.target.value
+            [targetName]: targetValue
+        }, () => {
+            localStorage.setItem(targetName, targetValue);
+            this.calculateResult(this.state.amount);
         });
-        localStorage.setItem(e.target.name, e.target.value);
     };
 
     swapCurrencies = e => {
@@ -50,9 +61,24 @@ export default class Home extends Component {
         this.setState({
             currencyFrom: currencyTo,
             currencyTo: currencyFrom,
+        }, () => {
+            localStorage.setItem('currencyFrom', currencyTo);
+            localStorage.setItem('currencyTo', currencyFrom);
+
+            this.calculateResult(this.state.amount);
         });
-        localStorage.setItem('currencyFrom', currencyTo);
-        localStorage.setItem('currencyTo', currencyFrom);
+    };
+
+    calculateResult = inputAmount => {
+        if (isNaN(inputAmount)) return;
+
+        const currencyToEuroRate = this.state.currencies.find(item => item.name === this.state.currencyTo).euroRate;
+        const currencyFromEuroRate = this.state.currencies.find(item => item.name === this.state.currencyFrom).euroRate;
+
+        const result = Math.round(currencyToEuroRate / currencyFromEuroRate * inputAmount * 100) / 100;
+
+        localStorage.setItem('result', result);
+        this.setState({result: result.toFixed(2)});
     };
 
     render() {
@@ -79,19 +105,26 @@ export default class Home extends Component {
                                                     onChange={this.handleChange}
                                                     value={this.state.currencyFrom}>
                                                 {this.state.currencies.map(currency => (
-                                                    <option value={currency} key={currency}>{currency}</option>
+                                                    <option value={currency.name}
+                                                            key={currency.name}>{currency.name}</option>
                                                 ))}
                                             </select>
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="amount1">Amount:</label>
-                                            <input type="number" className="form-control" id="amount1"
-                                                   placeholder="Enter amount"/>
+                                            <input type="number"
+                                                   className="form-control"
+                                                   id="amount1"
+                                                   placeholder="Enter amount"
+                                                   name="amount"
+                                                   onChange={this.handleChange}
+                                                   value={this.state.amount}/>
                                         </div>
                                     </div>
                                     <div className="col-md-2 text-center mt-md-5">
 
-                                        <button className="btn btn-primary" onClick={this.swapCurrencies} disabled={this.state.loading}>
+                                        <button className="btn btn-primary swapBtn" onClick={this.swapCurrencies}
+                                                disabled={this.state.loading}>
                                             {!this.state.loading ? <FontAwesomeIcon icon="exchange-alt" size="3x"/> :
                                                 <FontAwesomeIcon icon="spinner" size="3x" spin/>}
                                         </button>
@@ -105,18 +138,18 @@ export default class Home extends Component {
                                                     onChange={this.handleChange}
                                                     value={this.state.currencyTo}>
                                                 {this.state.currencies.map(currency => (
-                                                    <option value={currency} key={currency}>{currency}</option>
+                                                    <option value={currency.name}
+                                                            key={currency.name}>{currency.name}</option>
                                                 ))}
                                             </select>
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="amount2">Amount:</label>
                                             <input type="number" className="form-control form-control-plaintext"
-                                                   id="amount2" disabled/>
+                                                   id="amount2" value={this.state.result} disabled/>
                                         </div>
                                     </div>
                                 </div>
-                                {/*<button type="submit" className="btn btn-primary btn-lg btn-block">Convert</button>*/}
                             </form>
                         </div>
                     </Fragment>

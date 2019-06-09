@@ -9,9 +9,9 @@
 }
 
 .lightTheme .form-control:disabled {
-    background-color: darkgray;
+    background-color: lightgrey;
 }
 
 .darkTheme .form-control:disabled {
-    background-color: gray;
+    background-color: lightgrey;
 }

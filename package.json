@@ -16,7 +16,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -33,5 +33,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@types/jest": "^24.0.13",
+    "axios-mock-adapter": "^1.16.0",
+    "babel-jest": "^24.7.1",
+    "babel-polyfill": "^6.26.0",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.14.0",
+    "jest": "^24.7.1"
   }
 }
