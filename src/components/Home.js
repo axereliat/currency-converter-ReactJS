@@ -32,8 +32,8 @@ export default class Home extends Component {
                             .sort((a, b) => a.name.localeCompare(b.name))
                     }, () => {
                         this.setState({
-                            currencyFrom: localStorage.getItem('currencyFrom') || this.state.currencies[0],
-                            currencyTo: localStorage.getItem('currencyTo') || this.state.currencies[0],
+                            currencyFrom: localStorage.getItem('currencyFrom') || this.state.currencies[0].name,
+                            currencyTo: localStorage.getItem('currencyTo') || this.state.currencies[0].name,
                             amount: localStorage.getItem('amount') || '',
                             result: localStorage.getItem('result') || '',
                             loading: false
@@ -78,6 +78,8 @@ export default class Home extends Component {
     calculateResult = inputAmount => {
         if (isNaN(inputAmount)) return;
 
+        console.log(this.state.currencyTo);
+        console.log(this.state.currencies);
         const currencyToEuroRate = this.state.currencies.find(item => item.name === this.state.currencyTo).euroRate;
         const currencyFromEuroRate = this.state.currencies.find(item => item.name === this.state.currencyFrom).euroRate;
 
