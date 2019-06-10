@@ -4,6 +4,7 @@ import ThemeContext from '../context/theme-context';
 import {Requester} from "../api/Requester";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Footer from "./Footer";
+import CurrenciesTable from "./CurrenciesTable";
 
 export default class Home extends Component {
 
@@ -27,13 +28,13 @@ export default class Home extends Component {
             Requester.fetchCurrencies()
                 .then(res => {
                     this.setState({
-                        currencies: [...new Set(res.data.map(item => item.name))]
-                            .map(name => res.data.find(item => item.name === name))
-                            .sort((a, b) => a.name.localeCompare(b.name))
+                        currencies: [...new Set(res.data.map(item => item.code))]
+                            .map(code => res.data.find(item => item.code === code))
+                            .sort((a, b) => a.code.localeCompare(b.code))
                     }, () => {
                         this.setState({
-                            currencyFrom: localStorage.getItem('currencyFrom') || this.state.currencies[0].name,
-                            currencyTo: localStorage.getItem('currencyTo') || this.state.currencies[0].name,
+                            currencyFrom: localStorage.getItem('currencyFrom') || this.state.currencies[0].code,
+                            currencyTo: localStorage.getItem('currencyTo') || this.state.currencies[0].code,
                             amount: localStorage.getItem('amount') || '',
                             result: localStorage.getItem('result') || '',
                             loading: false
@@ -49,7 +50,7 @@ export default class Home extends Component {
 
     handleChange = e => {
         const targetName = e.target.name;
-        const targetValue = e.target.value;
+        const targetValue = e.target.value.split(' ')[0];
 
         this.setState({
             [targetName]: targetValue
@@ -78,10 +79,8 @@ export default class Home extends Component {
     calculateResult = inputAmount => {
         if (isNaN(inputAmount)) return;
 
-        console.log(this.state.currencyTo);
-        console.log(this.state.currencies);
-        const currencyToEuroRate = this.state.currencies.find(item => item.name === this.state.currencyTo).euroRate;
-        const currencyFromEuroRate = this.state.currencies.find(item => item.name === this.state.currencyFrom).euroRate;
+        const currencyToEuroRate = this.state.currencies.find(item => item.code === this.state.currencyTo).euroRate;
+        const currencyFromEuroRate = this.state.currencies.find(item => item.code === this.state.currencyFrom).euroRate;
 
         const result = Math.round(currencyToEuroRate / currencyFromEuroRate * inputAmount * 100) / 100;
 
@@ -115,8 +114,8 @@ export default class Home extends Component {
                                                     onChange={this.handleChange}
                                                     value={this.state.currencyFrom}>
                                                 {this.state.currencies.map(currency => (
-                                                    <option value={currency.name}
-                                                            key={currency.name}>{currency.name}</option>
+                                                    <option value={currency.code}
+                                                            key={currency.code}>{`${currency.code} (${currency.name})`}</option>
                                                 ))}
                                             </select>
                                         </div>
@@ -149,8 +148,8 @@ export default class Home extends Component {
                                                     onChange={this.handleChange}
                                                     value={this.state.currencyTo}>
                                                 {this.state.currencies.map(currency => (
-                                                    <option value={currency.name}
-                                                            key={currency.name}>{currency.name}</option>
+                                                    <option value={currency.code}
+                                                            key={currency.code}>{`${currency.code} (${currency.name})`}</option>
                                                 ))}
                                             </select>
                                         </div>
@@ -163,6 +162,7 @@ export default class Home extends Component {
                                 </div>
                             </form>
                         </div>
+                        <CurrenciesTable currencies={this.state.currencies}/>
                         <Footer/>
                     </Fragment>
                 )}
