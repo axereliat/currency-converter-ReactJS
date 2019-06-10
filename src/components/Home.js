@@ -1,8 +1,10 @@
 import React, {Component, Fragment} from 'react';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ReactCountdownClock from "react-countdown-clock";
+import ResettableTimer from "./ResettableTimer";
 import './Home.css';
 import ThemeContext from '../context/theme-context';
 import {Requester} from "../api/Requester";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Footer from "./Footer";
 import CurrenciesTable from "./CurrenciesTable";
 
@@ -95,6 +97,11 @@ export default class Home extends Component {
                     <Fragment>
                         <h1 className="text-center mt-2">Currency Converter</h1>
                         <hr/>
+                        <ResettableTimer seconds={10}
+                                             color="#000"
+                                             alpha={0.9}
+                                             size={80}
+                                             fetchCurrencies={this.fetchCurrencies} />
                         <div className="text-center">
                             <button
                                 className={"btn btn-secondary btn-lg mt-3 mb-2 " + (context.theme === 'darkTheme' ? 'lightTheme' : 'darkTheme')}
