@@ -14,6 +14,8 @@ export default class Home extends Component {
         currencies: [],
         currencyFrom: '',
         currencyTo: '',
+        currencyFromIcon: '',
+        currencyToIcon: '',
         result: '0.00',
         amount: '',
         loading: false
@@ -37,6 +39,8 @@ export default class Home extends Component {
                         this.setState({
                             currencyFrom: localStorage.getItem('currencyFrom') || this.state.currencies[0].code,
                             currencyTo: localStorage.getItem('currencyTo') || this.state.currencies[0].code,
+                            currencyFromIcon: localStorage.getItem('currencyFromIcon') || this.state.currencies[0].countryFlagUrl,
+                            currencyToIcon: localStorage.getItem('currencyToIcon') || this.state.currencies[0].countryFlagUrl,
                             amount: localStorage.getItem('amount') || '',
                             result: localStorage.getItem('result') || '',
                             loading: false
@@ -58,7 +62,14 @@ export default class Home extends Component {
             [targetName]: targetValue
         }, () => {
             localStorage.setItem(targetName, targetValue);
-            this.calculateResult(this.state.amount);
+            this.setState({
+                currencyFromIcon: this.state.currencies.find(c => c.code === this.state.currencyFrom).countryFlagUrl,
+                currencyToIcon: this.state.currencies.find(c => c.code === this.state.currencyTo).countryFlagUrl
+            }, () => {
+                localStorage.setItem('currencyFromIcon', this.state.currencyFromIcon);
+                localStorage.setItem('currencyToIcon', this.state.currencyToIcon);
+                this.calculateResult(this.state.amount);
+            });
         });
     };
 
@@ -98,10 +109,10 @@ export default class Home extends Component {
                         <h1 className="text-center mt-2">Currency Converter</h1>
                         <hr/>
                         <ResettableTimer seconds={10}
-                                             color="#000"
-                                             alpha={0.9}
-                                             size={80}
-                                             fetchCurrencies={this.fetchCurrencies} />
+                                         color="#000"
+                                         alpha={0.9}
+                                         size={80}
+                                         fetchCurrencies={this.fetchCurrencies}/>
                         <div className="text-center">
                             <button
                                 className={"btn btn-secondary btn-lg mt-3 mb-2 " + (context.theme === 'darkTheme' ? 'lightTheme' : 'darkTheme')}
@@ -128,14 +139,21 @@ export default class Home extends Component {
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="amount1"><h3>Amount</h3></label>
-                                            <input type="number"
-                                                   className="form-control form-control-lg amountInput"
-                                                   id="amount1"
-                                                   placeholder="Enter amount"
-                                                   name="amount"
-                                                   autoFocus
-                                                   onChange={this.handleChange}
-                                                   value={this.state.amount}/>
+                                            <div className="input-group mb-3">
+                                                <div className="input-group-prepend">
+                                                    <span className="input-group-text" id="basic-addon1">
+                                                        <img src={this.state.currencyFromIcon} width="30px" alt="No image..."/>
+                                                    </span>
+                                                </div>
+                                                <input type="number"
+                                                       className="form-control form-control-lg amountInput"
+                                                       id="amount1"
+                                                       placeholder="Enter amount"
+                                                       name="amount"
+                                                       autoFocus
+                                                       onChange={this.handleChange}
+                                                       value={this.state.amount}/>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="col-md-2 text-center mt-md-5">
@@ -162,8 +180,15 @@ export default class Home extends Component {
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="amount2"><h3>Result</h3></label>
+                                            <div className="input-group mb-3">
+                                                <div className="input-group-prepend">
+                                                    <span className="input-group-text" id="basic-addon1">
+                                                        <img src={this.state.currencyToIcon} width="30px" alt="No image..."/>
+                                                    </span>
+                                                </div>
                                             <input type="number" className="form-control form-control-lg amountInput"
                                                    id="amount2" value={this.state.result} disabled/>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
