@@ -76,11 +76,13 @@ export default class Home extends Component {
     swapCurrencies = e => {
         e.preventDefault();
 
-        const {currencyFrom, currencyTo} = {...this.state};
+        const {currencyFrom, currencyTo, currencyFromIcon, currencyToIcon} = {...this.state};
 
         this.setState({
             currencyFrom: currencyTo,
             currencyTo: currencyFrom,
+            currencyFromIcon: currencyToIcon,
+            currencyToIcon: currencyFromIcon,
         }, () => {
             localStorage.setItem('currencyFrom', currencyTo);
             localStorage.setItem('currencyTo', currencyFrom);
