@@ -1,6 +1,5 @@
 import React, {Component, Fragment} from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import ReactCountdownClock from "react-countdown-clock";
 import ResettableTimer from "./ResettableTimer";
 import './Home.css';
 import ThemeContext from '../context/theme-context';
@@ -21,6 +20,7 @@ export default class Home extends Component {
         amount: '',
         selectedCurrency: null,
         graphicsModal: false,
+        graphicsData: [],
         loading: false
     };
 
@@ -28,7 +28,7 @@ export default class Home extends Component {
         this.fetchCurrencies();
 
         setInterval(this.fetchCurrencies, 1.08e+7);
-    };
+    }
 
     fetchCurrencies = () => {
         this.setState({loading: true}, () => {
@@ -107,9 +107,17 @@ export default class Home extends Component {
     };
 
     selectCurrency = currency => {
-        this.setState({
-            selectedCurrency: currency
-        });
+        Requester.fetchCurrenciesGraphicsData()
+            .then(res => {
+                const currencyPeriods = res.data.filter(c => c.code === currency.code);
+                    this.setState({
+                        graphicsData: currencyPeriods,
+                        selectedCurrency: currency
+                    });
+            })
+            .catch(err => {
+                console.log(err.response);
+            })
     };
 
     toggleModal = () => {
@@ -159,7 +167,8 @@ export default class Home extends Component {
                                             <div className="input-group mb-3">
                                                 <div className="input-group-prepend">
                                                     <span className="input-group-text" id="basic-addon1">
-                                                        <img src={this.state.currencyFromIcon} width="30px" alt="No image..."/>
+                                                        <img src={this.state.currencyFromIcon} width="30px"
+                                                             alt="No image..."/>
                                                     </span>
                                                 </div>
                                                 <input type="number"
@@ -200,11 +209,13 @@ export default class Home extends Component {
                                             <div className="input-group mb-3">
                                                 <div className="input-group-prepend">
                                                     <span className="input-group-text" id="basic-addon1">
-                                                        <img src={this.state.currencyToIcon} width="30px" alt="No image..."/>
+                                                        <img src={this.state.currencyToIcon} width="30px"
+                                                             alt="No image..."/>
                                                     </span>
                                                 </div>
-                                            <input type="number" className="form-control form-control-lg amountInput"
-                                                   id="amount2" value={this.state.result} disabled/>
+                                                <input type="number"
+                                                       className="form-control form-control-lg amountInput"
+                                                       id="amount2" value={this.state.result} disabled/>
                                             </div>
                                         </div>
                                     </div>
@@ -218,7 +229,8 @@ export default class Home extends Component {
                         <CurrencyGraphicsModal currency={this.state.selectedCurrency}
                                                selectCurrency={this.selectCurrency}
                                                isModalOpen={this.state.graphicsModal}
-                                               toggleModal={this.toggleModal}/>
+                                               toggleModal={this.toggleModal}
+                                               graphicsData={this.state.graphicsData}/>
                     </Fragment>
                 )}
             </ThemeContext.Consumer>

@@ -7,4 +7,8 @@ export class Requester {
     static fetchCurrencies() {
         return axios.get(baseURL + 'fetch/currencies-table');
     }
+
+    static fetchCurrenciesGraphicsData() {
+        return axios.get(baseURL + 'fetch/currencies-history');
+    }
 }
