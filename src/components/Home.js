@@ -7,6 +7,7 @@ import ThemeContext from '../context/theme-context';
 import {Requester} from "../api/Requester";
 import Footer from "./Footer";
 import CurrenciesTable from "./CurrenciesTable";
+import CurrencyGraphicsModal from "./CurrencyGraphicsModal";
 
 export default class Home extends Component {
 
@@ -18,6 +19,8 @@ export default class Home extends Component {
         currencyToIcon: '',
         result: '0.00',
         amount: '',
+        selectedCurrency: null,
+        graphicsModal: false,
         loading: false
     };
 
@@ -101,6 +104,18 @@ export default class Home extends Component {
 
         localStorage.setItem('result', result);
         this.setState({result: result.toFixed(2)});
+    };
+
+    selectCurrency = currency => {
+        this.setState({
+            selectedCurrency: currency
+        });
+    };
+
+    toggleModal = () => {
+        this.setState({
+            graphicsModal: !this.state.graphicsModal
+        });
     };
 
     render() {
@@ -196,8 +211,14 @@ export default class Home extends Component {
                                 </div>
                             </form>
                         </div>
-                        <CurrenciesTable currencies={this.state.currencies}/>
+                        <CurrenciesTable currencies={this.state.currencies}
+                                         selectCurrency={this.selectCurrency}
+                                         toggleModal={this.toggleModal}/>
                         <Footer/>
+                        <CurrencyGraphicsModal currency={this.state.selectedCurrency}
+                                               selectCurrency={this.selectCurrency}
+                                               isModalOpen={this.state.graphicsModal}
+                                               toggleModal={this.toggleModal}/>
                     </Fragment>
                 )}
             </ThemeContext.Consumer>
