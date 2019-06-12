@@ -1,5 +1,6 @@
 import React from 'react';
 import ThemeContext from "../context/theme-context";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const CurrenciesTable = ({currencies, selectCurrency, toggleModal}) => (
     <ThemeContext.Consumer>
@@ -20,7 +21,14 @@ const CurrenciesTable = ({currencies, selectCurrency, toggleModal}) => (
                             {' ' + currency.code + ' ' + currency.name}
                         </td>
                         <td>{currency.euroRate}</td>
-                        <td><button className="btn btn-primary" onClick={() => {toggleModal(); selectCurrency(currency)}}>View Graphics</button></td>
+                        <td>
+                            <button className="btn btn-primary" onClick={() => {
+                                toggleModal();
+                                selectCurrency(currency)
+                            }}>
+                                <FontAwesomeIcon icon="chart-line" size="lg"/>
+                            </button>
+                        </td>
                     </tr>
                 )) : null}
                 </tbody>

@@ -2,10 +2,11 @@ import React, {Component, Fragment} from 'react';
 import Home from "./components/Home";
 import ThemeContext from "./context/theme-context";
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSpinner, faExchangeAlt } from '@fortawesome/free-solid-svg-icons'
+import { faSpinner, faExchangeAlt, faChartLine } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faExchangeAlt);
 library.add(faSpinner);
+library.add(faChartLine);
 
 class App extends Component {
 

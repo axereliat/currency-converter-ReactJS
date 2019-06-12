@@ -41,7 +41,7 @@ export default class CurrencyGraphicsModal extends Component {
 
         return (
             <Modal isOpen={isModalOpen} toggle={toggleModal} size='lg'>
-                <ModalHeader toggle={toggleModal}>Modal title</ModalHeader>
+                <ModalHeader toggle={toggleModal}>Graphics for {graphicsData.length ? graphicsData[0].code : null}</ModalHeader>
                 <ModalBody>
                     <CanvasJSReact.CanvasJSChart options = {options}
                                    onRef={ref => {
