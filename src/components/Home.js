@@ -109,7 +109,6 @@ export default class Home extends Component {
     selectCurrency = currency => {
         Requester.fetchCurrenciesGraphicsData()
             .then(res => {
-                const currencyPeriods = res.data.filter(c => c.code === currency.code);
                 const graphicsData = [];
                 for (const item of res.data) {
                     for (const innerItem of item.cube.filter(x => x.currency === currency.code)) {

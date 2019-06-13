@@ -15,7 +15,7 @@ export default class CurrencyGraphicsModal extends Component {
     }
 
     render() {
-        const {graphicsData, isModalOpen, toggleModal} = this.props;
+        const {graphicsData, isModalOpen, toggleModal, currency} = this.props;
 
         const options = {
             theme: "light2",
@@ -37,7 +37,7 @@ export default class CurrencyGraphicsModal extends Component {
 
         return (
             <Modal isOpen={isModalOpen} toggle={toggleModal} size='lg'>
-                <ModalHeader toggle={toggleModal}>Graphics for {graphicsData.length ? graphicsData[0].code : null}</ModalHeader>
+                <ModalHeader toggle={toggleModal}>{currency ? currency.code : null}</ModalHeader>
                 <ModalBody>
                     <CanvasJSReact.CanvasJSChart options = {options}
                                    onRef={ref => {
