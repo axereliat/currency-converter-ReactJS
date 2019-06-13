@@ -22,7 +22,7 @@ class ResettableTimer extends React.Component {
             <div>
                 <CountDown
                     key={this.state.completions}
-                    seconds={15}
+                    seconds={60}
                     color="#000"
                     alpha={0.9}
                     size={80}

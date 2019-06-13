@@ -7,6 +7,8 @@ import {Requester} from "../api/Requester";
 import Footer from "./Footer";
 import CurrenciesTable from "./CurrenciesTable";
 import CurrencyGraphicsModal from "./CurrencyGraphicsModal";
+import {DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown} from "reactstrap";
+import CurrencyDropdown from "./CurrencyDropdown";
 
 export default class Home extends Component {
 
@@ -14,8 +16,6 @@ export default class Home extends Component {
         currencies: [],
         currencyFrom: '',
         currencyTo: '',
-        currencyFromIcon: '',
-        currencyToIcon: '',
         result: '0.00',
         amount: '',
         selectedCurrency: null,
@@ -24,10 +24,17 @@ export default class Home extends Component {
         loading: false
     };
 
+    isJson(str) {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
+        }
+        return true;
+    }
+
     componentDidMount() {
         this.fetchCurrencies();
-
-        setInterval(this.fetchCurrencies, 1.08e+7);
     }
 
     fetchCurrencies = () => {
@@ -40,10 +47,8 @@ export default class Home extends Component {
                             .sort((a, b) => a.code.localeCompare(b.code))
                     }, () => {
                         this.setState({
-                            currencyFrom: localStorage.getItem('currencyFrom') || this.state.currencies[0].code,
-                            currencyTo: localStorage.getItem('currencyTo') || this.state.currencies[0].code,
-                            currencyFromIcon: localStorage.getItem('currencyFromIcon') || this.state.currencies[0].countryFlagUrl,
-                            currencyToIcon: localStorage.getItem('currencyToIcon') || this.state.currencies[0].countryFlagUrl,
+                            currencyFrom: this.isJson(localStorage.getItem('currencyFrom')) ? JSON.parse(localStorage.getItem('currencyFrom')) : this.state.currencies[0],
+                            currencyTo: this.isJson(localStorage.getItem('currencyTo')) ? JSON.parse(localStorage.getItem('currencyTo')) : this.state.currencies[0],
                             amount: localStorage.getItem('amount') || '',
                             result: localStorage.getItem('result') || '',
                             loading: false
@@ -59,33 +64,24 @@ export default class Home extends Component {
 
     handleChange = e => {
         const targetName = e.target.name;
-        const targetValue = e.target.value.split(' ')[0];
+        const targetValue = e.target.value;
 
         this.setState({
             [targetName]: targetValue
         }, () => {
             localStorage.setItem(targetName, targetValue);
-            this.setState({
-                currencyFromIcon: this.state.currencies.find(c => c.code === this.state.currencyFrom).countryFlagUrl,
-                currencyToIcon: this.state.currencies.find(c => c.code === this.state.currencyTo).countryFlagUrl
-            }, () => {
-                localStorage.setItem('currencyFromIcon', this.state.currencyFromIcon);
-                localStorage.setItem('currencyToIcon', this.state.currencyToIcon);
-                this.calculateResult(this.state.amount);
-            });
+            this.calculateResult(targetValue);
         });
     };
 
     swapCurrencies = e => {
         e.preventDefault();
 
-        const {currencyFrom, currencyTo, currencyFromIcon, currencyToIcon} = {...this.state};
+        const {currencyFrom, currencyTo} = {...this.state};
 
         this.setState({
             currencyFrom: currencyTo,
             currencyTo: currencyFrom,
-            currencyFromIcon: currencyToIcon,
-            currencyToIcon: currencyFromIcon,
         }, () => {
             localStorage.setItem('currencyFrom', currencyTo);
             localStorage.setItem('currencyTo', currencyFrom);
@@ -97,10 +93,11 @@ export default class Home extends Component {
     calculateResult = inputAmount => {
         if (isNaN(inputAmount)) return;
 
-        const currencyToEuroRate = this.state.currencies.find(item => item.code === this.state.currencyTo).euroRate;
-        const currencyFromEuroRate = this.state.currencies.find(item => item.code === this.state.currencyFrom).euroRate;
+        const currencyFromEuroRate = this.state.currencyFrom.euroRate;
+        const currencyToEuroRate = this.state.currencyTo.euroRate;
 
         const result = Math.round(currencyToEuroRate / currencyFromEuroRate * inputAmount * 100) / 100;
+        console.log(result);
 
         localStorage.setItem('result', result);
         this.setState({result: result.toFixed(2)});
@@ -118,10 +115,10 @@ export default class Home extends Component {
                         });
                     }
                 }
-                    this.setState({
-                        graphicsData,
-                        selectedCurrency: currency
-                    });
+                this.setState({
+                    graphicsData,
+                    selectedCurrency: currency
+                });
             })
             .catch(err => {
                 console.log(err.response);
@@ -134,6 +131,15 @@ export default class Home extends Component {
         });
     };
 
+    dropDownChangeState = (c, currency) => {
+        this.setState({
+            [c]: currency,
+        }, () => {
+            localStorage.setItem(c, JSON.stringify(currency));
+            this.calculateResult(this.state.amount);
+        });
+    };
+
     render() {
         return (
             <ThemeContext.Consumer>
@@ -141,7 +147,7 @@ export default class Home extends Component {
                     <Fragment>
                         <h1 className="text-center mt-2">Currency Converter</h1>
                         <hr/>
-                        <ResettableTimer seconds={10}
+                        <ResettableTimer seconds={60}
                                          color="#000"
                                          alpha={0.9}
                                          size={80}
@@ -159,23 +165,17 @@ export default class Home extends Component {
                                     <div className="col-md-5">
                                         <div className="form-group">
                                             <label htmlFor="currencyFrom">Currency I have</label>
-                                            <select className="form-control"
-                                                    id="currencyFrom"
-                                                    name="currencyFrom"
-                                                    onChange={this.handleChange}
-                                                    value={this.state.currencyFrom}>
-                                                {this.state.currencies.map(currency => (
-                                                    <option value={currency.code}
-                                                            key={currency.code}>{`${currency.code} (${currency.name})`}</option>
-                                                ))}
-                                            </select>
+                                            <CurrencyDropdown currencies={this.state.currencies}
+                                                              type={'currencyFrom'}
+                                                              currencySelection={this.state.currencyFrom}
+                                                              dropDownChangeState={this.dropDownChangeState}/>
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="amount1"><h3>Amount</h3></label>
                                             <div className="input-group mb-3">
                                                 <div className="input-group-prepend">
                                                     <span className="input-group-text" id="basic-addon1">
-                                                        <img src={this.state.currencyFromIcon} width="30px"
+                                                        <img src={this.state.currencyFrom.countryFlagUrl} width="30px"
                                                              alt="No image..."/>
                                                     </span>
                                                 </div>
@@ -201,23 +201,17 @@ export default class Home extends Component {
                                     <div className="col-md-5">
                                         <div className="form-group">
                                             <label htmlFor="currencyTo">Currency I want</label>
-                                            <select className="form-control"
-                                                    id="currencyTo"
-                                                    name="currencyTo"
-                                                    onChange={this.handleChange}
-                                                    value={this.state.currencyTo}>
-                                                {this.state.currencies.map(currency => (
-                                                    <option value={currency.code}
-                                                            key={currency.code}>{`${currency.code} (${currency.name})`}</option>
-                                                ))}
-                                            </select>
+                                            <CurrencyDropdown currencies={this.state.currencies}
+                                                              type={'currencyTo'}
+                                                              currencySelection={this.state.currencyTo}
+                                                              dropDownChangeState={this.dropDownChangeState}/>
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="amount2"><h3>Result</h3></label>
                                             <div className="input-group mb-3">
                                                 <div className="input-group-prepend">
                                                     <span className="input-group-text" id="basic-addon1">
-                                                        <img src={this.state.currencyToIcon} width="30px"
+                                                        <img src={this.state.currencyTo.countryFlagUrl} width="30px"
                                                              alt="No image..."/>
                                                     </span>
                                                 </div>
