@@ -224,6 +224,7 @@ export default class Home extends Component {
                                 </div>
                             </form>
                         </div>
+                        <h2 className="text-center text-muted">Currencies Table</h2>
                         <CurrenciesTable currencies={this.state.currencies}
                                          selectCurrency={this.selectCurrency}
                                          toggleModal={this.toggleModal}/>
