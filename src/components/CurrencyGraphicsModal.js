@@ -31,11 +31,7 @@ export default class CurrencyGraphicsModal extends Component {
                 type: "line",
                 xValueFormatString: "MMM YYYY",
                 yValueFormatString: "$#,##0.00",
-                dataPoints: this.props.graphicsData.map(currency => {
-                    currency.x = new Date(currency.date);
-                    currency.y = currency.euroRate;
-                    return currency;
-                })
+                dataPoints: this.props.graphicsData
             }]
         };
 

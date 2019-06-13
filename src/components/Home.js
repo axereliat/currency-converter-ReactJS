@@ -110,8 +110,17 @@ export default class Home extends Component {
         Requester.fetchCurrenciesGraphicsData()
             .then(res => {
                 const currencyPeriods = res.data.filter(c => c.code === currency.code);
+                const graphicsData = [];
+                for (const item of res.data) {
+                    for (const innerItem of item.cube.filter(x => x.currency === currency.code)) {
+                        graphicsData.push({
+                            x: new Date(item.time),
+                            y: +innerItem.rate
+                        });
+                    }
+                }
                     this.setState({
-                        graphicsData: currencyPeriods,
+                        graphicsData,
                         selectedCurrency: currency
                     });
             })
