@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ResettableTimer from "./ResettableTimer";
 import './Home.css';
 import ThemeContext from '../context/theme-context';
-import {Requester} from "../api/Requester";
+import {baseURL, Requester} from "../api/Requester";
 import Footer from "./Footer";
 import CurrenciesTable from "./CurrenciesTable";
 import CurrencyGraphicsModal from "./CurrencyGraphicsModal";
@@ -61,7 +61,7 @@ export default class Home extends Component {
                 })
                 .catch(err => {
                     console.log(err.response);
-                    this.setState({loading: false});
+                    this.setState({loading: false, hasError: true});
                 });
         });
     };
@@ -126,6 +126,7 @@ export default class Home extends Component {
             })
             .catch(err => {
                 console.log(err.response);
+                this.setState({hasError: true});
             })
     };
 
@@ -142,6 +143,10 @@ export default class Home extends Component {
             localStorage.setItem(c, JSON.stringify(currency));
             this.calculateResult(this.state.amount);
         });
+    };
+
+    downloadPdf = () => {
+        window.open(baseURL + 'download-currencies', '_blank');
     };
 
     render() {
@@ -237,6 +242,7 @@ export default class Home extends Component {
                             </form>
                         </div>
                         <h2 className="text-center text-muted">Currencies Table</h2>
+                        <button className="btn btn-primary" onClick={this.downloadPdf}>Download PDF</button>
                         <CurrenciesTable currencies={this.state.currencies}
                                          selectCurrency={this.selectCurrency}
                                          toggleModal={this.toggleModal}/>
