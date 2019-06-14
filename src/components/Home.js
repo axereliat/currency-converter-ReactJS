@@ -7,7 +7,6 @@ import {Requester} from "../api/Requester";
 import Footer from "./Footer";
 import CurrenciesTable from "./CurrenciesTable";
 import CurrencyGraphicsModal from "./CurrencyGraphicsModal";
-import {DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown} from "reactstrap";
 import CurrencyDropdown from "./CurrencyDropdown";
 
 export default class Home extends Component {
@@ -21,6 +20,7 @@ export default class Home extends Component {
         selectedCurrency: null,
         graphicsModal: false,
         graphicsData: [],
+        hasError: false,
         loading: false
     };
 
@@ -35,6 +35,10 @@ export default class Home extends Component {
 
     componentDidMount() {
         this.fetchCurrencies();
+    }
+
+    componentDidCatch(error, errorInfo) {
+        this.setState({hasError: true});
     }
 
     fetchCurrencies = () => {
@@ -141,6 +145,14 @@ export default class Home extends Component {
     };
 
     render() {
+        if (this.state.hasError) {
+            return (
+                <div className="jumbotron">
+                    <h1 className="text-center">Something went wrong :(</h1>
+                </div>
+            );
+        }
+
         return (
             <ThemeContext.Consumer>
                 {context => (
